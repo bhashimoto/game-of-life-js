@@ -7,6 +7,7 @@ Hand-rolled implementation of Conway's Game of Life in vanilla Javascript.
 - Step iterations
 - Custom initial state (paint on screen)
 - Random initial state
+- Dark mode
 
 ## Issues
 - Canvas is only filling half the screen when simulation plays
