@@ -8,7 +8,13 @@
 	</head>
 	<body>
 		<div id="content" class="vertical">
-			<button onclick="iterate()">iterate</button>
+			<div>
+				<button id="btn-go" onclick="unpause()">Go</button>
+				<button id="btn-stop" onclick="pause()">Stop</button>
+				<!--
+				<button onclick="iterate()">iterate</button>
+				-->
+			</div>
 			<canvas id="game_canvas" width="800" height="400" style="border:1px solid black;">
 			</canvas>
 		</div>

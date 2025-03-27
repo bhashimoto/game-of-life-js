@@ -1,197 +1,175 @@
-function hello() {
-	alert("hello")
-}
-
-
-/**
- * 
- * @returns CanvasRenderingContext2D
- */
-function getCanvasCtx() {
-	const canvas = document.getElementById("game_canvas")
-	if (canvas.getContext) {
-		const ctx = canvas.getContext("2d")
-		return ctx
-	} else {
-		console.error("Could not get canvas context.")
+class Conway {
+	canvas
+	ctx
+	items
+	constructor() {
+		this.active = false
+		this.pixelSize = 10
+		this.width = 80
+		this.height = 40
+		this.getCanvasCtx()
 	}
-}
 
-/**
- * 
- * @param {number} pixelSize 
- * @param {Array.Array} items 
- */
-function drawGrid(pixelSize, items) {
-	ctx = getCanvasCtx()
-	ctx.strokeStyle = 'lightgrey'
-	ctx.lineWidth = 1
-	ctx.fillStye = 'white'
-	canvas = document.getElementById('game_canvas')
-	ctx.clearRect(0,0,canvas.width, canvas.height)
-	for (let i = 0; i < items.length; i++) {
-		for (let j = 0; j < items[i].length; j++) {
-			if (items[i][j]) {
-				ctx.fillStye = 'black'
-				ctx.fillRect(j*pixelSize, i*pixelSize, pixelSize, pixelSize)
-			} else {
-				ctx.fillStye = 'white'
-				//ctx.fillRect(j*pixelSize, i*pixelSize, pixelSize, pixelSize)
+	getCanvasCtx() {
+		this.canvas = document.getElementById("game_canvas")
+		if (this.canvas.getContext) {
+			this.ctx = this.canvas.getContext("2d")
+		} else {
+			console.error("Could not get canvas context.")
+		}
+	}
+
+	/**
+	 * 
+	 * @param {Array.Array} items 
+	 */
+	drawGrid() {
+		this.ctx.strokeStyle = 'lightgrey'
+		this.ctx.lineWidth = 1
+		this.ctx.fillStye = 'white'
+		// clear screen to redraw
+		this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height)
+		for (let i = 0; i < this.items.length; i++) {
+			for (let j = 0; j < this.items[i].length; j++) {
+				if (this.items[i][j]) {
+					// paint the square
+					this.ctx.fillStye = 'black'
+					this.ctx.fillRect(j*this.pixelSize, i*this.pixelSize, this.pixelSize, this.pixelSize)
+				} 				
+				// paint the borders
+				this.ctx.strokeRect(j*this.pixelSize, i*this.pixelSize, this.pixelSize, this.pixelSize)
 			}
-			ctx.strokeRect(j*pixelSize, i*pixelSize, pixelSize, pixelSize)
 		}
 	}
-}
 
-/**
- * 
- * @param {Array.Array} items 
- * @returns Array.Array
- */
-function calculateNextState(items) {
-	let newState = []
-	for (let i = 0; i < items.length; i++) {
-		let row = []
-		for (let j = 0; j < items[i].length; j++) {
-			row.push(nextPixelState(items, i, j))
+	calculateNextState() {
+		let newState = []
+		for (let i = 0; i < this.items.length; i++) {
+			let row = []
+			for (let j = 0; j < this.items.length; j++) {
+				row.push(this.nextPixelState(i, j))	
+			}
+			newState.push(row)
 		}
-		newState.push(row)
+		this.items = newState
 	}
-	return newState
-}
 
-/**
- * 
- * @param {Array.Array} items 
- * @param {number} i 
- * @param {number} j 
- */
-function nextPixelState(items, i, j) {
-	neighbours = countNeighbours(items, i, j)
-	if (items[i][j]) {
-		if (neighbours < 2) {
+	nextPixelState(i,j) {
+		let neighbours = this.countNeighbours(i, j)
+		if (this.items[i][j]) {
+			if (neighbours < 2) {
+				return false
+			}
+			if (neighbours < 4) {
+				return true
+			}
 			return false
-		}
-		if (neighbours < 4) {
-			return true
+		} else {
+			if (neighbours == 3) {
+				return true
+			}
 		}
 		return false
-	} else {
-		if (neighbours == 3) {
-			return true
-		}
 	}
-	return false
-}
 
-/**
- * 
- * @param {Array.Array} items 
- * @param {number} i 
- * @param {number} j 
- */
-function countNeighbours(items, i, j) {
-	let neighbours = 0
-	for (let x = -1; x < 2; x++){
-		for (let y = -1; y < 2; y++) {
-			if (x == 0 && y == 0) {
-				continue
-			} else {
-				if (isInside(items, i+x, j+y) && items[i+x][j+y]) {
-					neighbours++
+	countNeighbours(i, j) {
+		let neighbours = 0
+		for (let x = -1; x < 2; x++) {
+			for (let y = -1; y < 2; y++) {
+				if (x == 0 && y == 0) {
+					continue
+				} else {
+					if (this.isInside(i+x, j+y) && this.items[i+x][j+y]) {
+						neighbours++
+					}
 				}
 			}
 		}
+		return neighbours
 	}
-	return neighbours
-}
 
-/**
- * 
- * @param {Array.Array} grid 
- * @param {number} i 
- * @param {number} j 
- * @returns 
- */
-function isInside(grid, i, j) {
-	const height= grid.length
-	const width = grid[0].length
-	if (i < 0) return false
-	if (j < 0) return false
-	if (i >= height) return false
-	if (j >= width) return false
-	return true
-}
+	isInside(i, j) {
+		if (i < 0) return false
+		if (j < 0) return false
+		if (i >= this.height) return false
+		if (j >= this.width) return false
+		return true
+	}
 
-/**
- * 
- * @param {Array.Array} grid 
- * @param {Array} alive 
- */
-function buildSeed(grid, alive) {
-	alive.forEach(element => {
-		grid[element.i][element.j] = true
-	});
-}
+	buildSeed(seed) {
+		this.buildEmptyGrid()
+		seed.forEach(element => {
+			this.items[element.y][element.x] = true
+		})
+	}
 
-function setup() {
-	console.debug("running setup")
-	const height = 20
-	const width = 40
-	grid = []
-	for (let i = 0; i < height; i++) {
-		row = []
-		for (let j = 0 ; j < width; j++) {
-			row.push(false)
+	setup(seed) {
+		console.debug("running setup")
+		this.buildEmptyGrid()
+		if (seed) {
+			this.buildSeed(seed)
 		}
-		grid.push(row)
+		this.drawGrid()
+		console.debug("setup complete")
 	}
 
-	alive = [
-	
-		{i: 5, j: 3},
-		/*{i: 13, j: 7},
-		{i: 12, j: 7},
-		{i: 11, j: 7},
-		{i: 12, j: 9},
-		{i: 11, j: 9},
-		{i: 10, j: 9},
-		{i: 11, j: 10},*/
-	]
+	buildEmptyGrid() {
+		this.items = []
+		for (let i = 0; i < this.height; i++) {
+			const row = []
+			for (let j = 0; j < this.width; j++) {
+				row.push(false)
+			}
+			this.items.push(row)
+		}
+	}
 
-	buildSeed(grid, alive)
-	drawGrid(20, grid)
-	console.debug("setup complete")
-	return grid
-}
+	pause() {
+		this.active = false
+	}
 
-/**
- * 
- * @param {Array.Array} grid 
- */
-async function run(grid) {
-	while (true) {
-		newGrid = calculateNextState(grid)
-		drawGrid(20, newGrid)
-		grid = newGrid
-		await new Promise(r => setTimeout(r,100000))
+	unpause() {
+		this.active = true
+	}
+
+	async run() {
+		while (true) {
+			if (this.active) {
+				this.calculateNextState()
+				this.drawGrid()
+			}
+			await new Promise(r => setTimeout(r, 100))
+		}
 	}
 }
 
-function update(){
-	newGrid = calculateNextState(globalgrid)
-	drawGrid(20,newGrid)
-	globalgrid = newGrid
-}
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 function main() {
-	grid = setup()
-	drawGrid(20, grid)
-	run(grid)
+	alive = [
+		{y: 15, x: 3},
+		{y: 15, x: 5},
+		{y: 14, x: 5},
+		{y: 13, x: 7},
+		{y: 12, x: 7},
+		{y: 11, x: 7},
+		{y: 12, x: 9},
+		{y: 11, x: 9},
+		{y: 10, x: 9},
+		{y: 11, x: 10},
+	]
+	game.setup(alive)
+
+	game.run()
 }
-globalgrid = setup()
+function pause() {
+	console.log("pausing")
+	game.pause()
+}
+function unpause() {
+	console.log("unpausing")
+	game.unpause()
+}
+
+game = new Conway()
 main()
