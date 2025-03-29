@@ -8,12 +8,18 @@
 	</head>
 	<body>
 		<div id="content" class="vertical">
+			<div class="vertical">
+				<div>
+					<span>Iterations: </span><span id="iteration-counter"></span>
+				</div>
+				<div>
+					<span>Population: </span><span id="population-counter"></span>
+				</div>
+			</div>
 			<div>
 				<button id="btn-go" onclick="unpause()">Go</button>
 				<button id="btn-stop" onclick="pause()">Stop</button>
-				<!--
-				<button onclick="iterate()">iterate</button>
-				-->
+				<button onclick="step()">Iterate</button>
 			</div>
 			<canvas id="game_canvas" width="800" height="400" style="border:1px solid black;">
 			</canvas>

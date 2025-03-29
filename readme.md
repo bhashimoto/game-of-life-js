@@ -2,9 +2,9 @@
 Hand-rolled implementation of Conway's Game of Life in vanilla Javascript.
 
 ## To Do
-- Iteration counter
-- Population counter
-- Step iterations
+- ~~Iteration counter~~
+- ~~Population counter~~
+- ~~Step iterations~~
 - Custom initial state (paint on screen)
 - Random initial state
 - Dark mode

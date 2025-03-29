@@ -3,7 +3,9 @@ class Conway {
 	ctx
 	items
 	constructor() {
-		this.active = false
+		this.populationSize = 0
+		this.iterations = 0
+		this.isActive = false
 		this.pixelSize = 10
 		this.width = 80
 		this.height = 40
@@ -52,20 +54,44 @@ class Conway {
 			newState.push(row)
 		}
 		this.items = newState
+		this.iterations++
+		this.updateCounters()
+	}
+
+	updateCounters() {
+		this.updatePopulationCounter()
+		this.updateIterationCounter()
+	}
+
+	updatePopulationCounter() {
+		const element = document.getElementById("population-counter")
+		element.textContent= this.populationSize
+	}
+
+	updateIterationCounter() {
+		const element = document.getElementById("iteration-counter")
+		element.textContent= this.iterations
 	}
 
 	nextPixelState(i,j) {
 		let neighbours = this.countNeighbours(i, j)
 		if (this.items[i][j]) {
+			// less than two neighbours, kill the cell
 			if (neighbours < 2) {
+				this.populationSize--
 				return false
 			}
+			// 2 or 3 neighbours, keep the cell
 			if (neighbours < 4) {
 				return true
 			}
+			// more than 3 neughbours, kill the cell
+			this.populationSize--
 			return false
 		} else {
+			// three cells surrounding an empty space, create cell
 			if (neighbours == 3) {
+				this.populationSize++
 				return true
 			}
 		}
@@ -100,6 +126,7 @@ class Conway {
 		this.buildEmptyGrid()
 		seed.forEach(element => {
 			this.items[element.y][element.x] = true
+			this.populationSize++
 		})
 	}
 
@@ -110,6 +137,7 @@ class Conway {
 			this.buildSeed(seed)
 		}
 		this.drawGrid()
+		this.updateCounters()
 		console.debug("setup complete")
 	}
 
@@ -125,16 +153,16 @@ class Conway {
 	}
 
 	pause() {
-		this.active = false
+		this.isActive = false
 	}
 
 	unpause() {
-		this.active = true
+		this.isActive = true
 	}
 
 	async run() {
 		while (true) {
-			if (this.active) {
+			if (this.isActive) {
 				this.calculateNextState()
 				this.drawGrid()
 			}
@@ -169,6 +197,15 @@ function pause() {
 function unpause() {
 	console.log("unpausing")
 	game.unpause()
+}
+function step() {
+	if (!game.isActive){
+		console.log("iterating one step")
+		game.calculateNextState()
+		game.drawGrid()
+	} else {
+		console.log("Can't step while game is active")
+	}
 }
 
 game = new Conway()
