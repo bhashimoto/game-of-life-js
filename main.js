@@ -48,7 +48,7 @@ class Conway {
 		let newState = []
 		for (let i = 0; i < this.items.length; i++) {
 			let row = []
-			for (let j = 0; j < this.items.length; j++) {
+			for (let j = 0; j < this.items[i].length; j++) {
 				row.push(this.nextPixelState(i, j))	
 			}
 			newState.push(row)

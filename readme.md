@@ -10,4 +10,4 @@ Hand-rolled implementation of Conway's Game of Life in vanilla Javascript.
 - Dark mode
 
 ## Issues
-- Canvas is only filling half the screen when simulation plays
+- ~~Canvas is only filling half the screen when simulation plays~~
