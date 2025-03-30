@@ -132,6 +132,7 @@ class Conway {
 
 	setup(seed) {
 		console.debug("running setup")
+		this.setupControlButtons("btn-pause",'btn-unpause','btn-step')
 		this.buildEmptyGrid()
 		if (seed) {
 			this.buildSeed(seed)
@@ -139,6 +140,25 @@ class Conway {
 		this.drawGrid()
 		this.updateCounters()
 		console.debug("setup complete")
+	}
+
+	/**
+	 * Set the control buttons. Take the ids of the buttons
+	 * @param {string} pause 
+	 * @param {string} unpause 
+	 * @param {string} step 
+	 */
+	setupControlButtons(pause, unpause, step) {
+		document.getElementById(pause)
+			.addEventListener('click', (e) => {this.pause()});
+		
+		document.getElementById(unpause)
+			.addEventListener('click', (e) => {this.unpause()});
+		
+		document.getElementById(step)
+			.addEventListener('click', (e) => {this.step()});
+
+
 	}
 
 	buildEmptyGrid() {
@@ -153,11 +173,23 @@ class Conway {
 	}
 
 	pause() {
+		console.log("Pausing")
 		this.isActive = false
 	}
 
 	unpause() {
+		console.log("Unpausing")
 		this.isActive = true
+	}
+
+	step() {
+		if (!this.isActive) {
+			console.log("Stepping")
+			this.calculateNextState()
+			this.drawGrid()
+		} else {
+			console.log("Can't step while game is active!")
+		}
 	}
 
 	async run() {
@@ -189,23 +221,6 @@ function main() {
 	game.setup(alive)
 
 	game.run()
-}
-function pause() {
-	console.log("pausing")
-	game.pause()
-}
-function unpause() {
-	console.log("unpausing")
-	game.unpause()
-}
-function step() {
-	if (!game.isActive){
-		console.log("iterating one step")
-		game.calculateNextState()
-		game.drawGrid()
-	} else {
-		console.log("Can't step while game is active")
-	}
 }
 
 game = new Conway()
