@@ -5,7 +5,9 @@ Hand-rolled implementation of Conway's Game of Life in vanilla Javascript.
 - ~~Iteration counter~~
 - ~~Population counter~~
 - ~~Step iterations~~
-- Custom initial state (paint on screen)
+- Paint on screen
+    - ~~pixel painting~~
+    - stroke painting
 - Random initial state
 - Dark mode
 

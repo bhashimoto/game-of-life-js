@@ -13,6 +13,7 @@ class Conway {
 	}
 
 	getCanvasCtx() {
+		/** @type {HTMLCanvasElement} */
 		this.canvas = document.getElementById("game_canvas")
 		if (this.canvas.getContext) {
 			this.ctx = this.canvas.getContext("2d")
@@ -133,6 +134,7 @@ class Conway {
 	setup(seed) {
 		console.debug("running setup")
 		this.setupControlButtons("btn-pause",'btn-unpause','btn-step')
+		this.setupCanvasHandler()
 		this.buildEmptyGrid()
 		if (seed) {
 			this.buildSeed(seed)
@@ -140,6 +142,20 @@ class Conway {
 		this.drawGrid()
 		this.updateCounters()
 		console.debug("setup complete")
+	}
+
+	setupCanvasHandler() {
+		this.canvas.addEventListener('click', event => {
+			const bounds = this.canvas.getBoundingClientRect()
+			const scaleX = this.canvas.width/bounds.width
+			const scaleY = this.canvas.height/bounds.height
+			const x = Math.floor((event.clientX - bounds.left)*scaleX/this.pixelSize)
+			const y = Math.floor((event.clientY - bounds.top)*scaleY/this.pixelSize)
+			console.log(`(${x}, ${y})`)
+			this.items[y][x] = true
+			this.drawGrid()
+		})
+		
 	}
 
 	/**
@@ -181,6 +197,7 @@ class Conway {
 		console.log("Unpausing")
 		this.isActive = true
 	}
+
 
 	step() {
 		if (!this.isActive) {
