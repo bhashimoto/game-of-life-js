@@ -153,6 +153,7 @@ class Conway {
 			const y = Math.floor((event.clientY - bounds.top)*scaleY/this.pixelSize)
 			console.log(`(${x}, ${y})`)
 			this.items[y][x] = true
+			this.populationSize++
 			this.drawGrid()
 		})
 		
